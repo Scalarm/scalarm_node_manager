@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+
+require "daemons"
+
+spec = Gem::Specification.find_by_name("scalarm_node_manager")
+gem_lib = spec.gem_dir + "/lib"
+
+Daemons.run(File.join(gem_lib, 'scalarm_node_manager.rb'))

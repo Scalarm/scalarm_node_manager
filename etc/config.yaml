@@ -1,0 +1,14 @@
+# port for scalarm node manager web server
+port: 12200
+# login and password to access this manager
+login: eusas
+password: hidden
+# address to the information service
+scalarm_information_service_url: 192.168.10.253:11200
+# login and password to access the information service
+information_service_login: eusas
+information_service_password: hidden
+# where Scalarm Node Manager will unpack managers
+installation_dir: /opt
+# from which port installed managers will be started
+starting_port: 3001
