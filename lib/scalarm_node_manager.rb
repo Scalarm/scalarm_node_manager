@@ -12,6 +12,8 @@ module Scalarm
       @config = YAML::load_file File.join(spec.gem_dir, "etc", "config.yaml")
 
       @@manager_type = nil
+
+      register
     end
 
     def server_port
@@ -75,6 +77,20 @@ module Scalarm
 
     def component_dir(manager_type)
       "#{@config["installation_dir"]}/scalarm_#{manager_type}_manager"
+    end
+
+    def register
+      # checking current
+      host = ""
+      UDPSocket.open { |s| s.connect('64.233.187.99', 1); host = s.addr.last }
+
+      sis_server, sis_port = @config["scalarm_information_service_url"].split(":")
+      http = Net::HTTP.new(sis_server, sis_port.to_i)
+
+      req = Net::HTTP::Post.new("/register_node_manager")
+      req.basic_auth @config["information_service_login"], @config["information_service_password"]
+      req.set_form_data({"server" => host, "port" => @config["port"]})
+      response = http.request(req)
     end
 
   end

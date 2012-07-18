@@ -4,7 +4,7 @@ port: 12200
 login: eusas
 password: hidden
 # address to the information service
-scalarm_information_service_url: 192.168.10.253:11200
+scalarm_information_service_url: localhost:11200
 # login and password to access the information service
 information_service_login: eusas
 information_service_password: hidden
