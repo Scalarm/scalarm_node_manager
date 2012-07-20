@@ -12,3 +12,5 @@ information_service_password: hidden
 installation_dir: /opt
 # from which port installed managers will be started
 starting_port: 3001
+# time interval between subsequent registration of node manager
+registration_interval: 300

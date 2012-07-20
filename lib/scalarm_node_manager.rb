@@ -1,4 +1,5 @@
 require "scalarm_node_manager/version"
+require "node_manager_notifier"
 require "sinatra"
 require "yaml"
 require 'net/http'
@@ -13,7 +14,13 @@ module Scalarm
 
       @@manager_type = nil
 
-      register
+      node_manager_notifier = Scalarm::NodeManagerNotifier.new(@config["registration_interval"].to_i,
+                                                               @config["starting_port"],
+                                                               @config["scalarm_information_service_url"],
+                                                               @config["information_service_login"],
+                                                               @config["information_service_password"])
+
+      node_manager_notifier.start_registration_thread
     end
 
     def server_port
@@ -77,20 +84,6 @@ module Scalarm
 
     def component_dir(manager_type)
       "#{@config["installation_dir"]}/scalarm_#{manager_type}_manager"
-    end
-
-    def register
-      # checking current
-      host = ""
-      UDPSocket.open { |s| s.connect('64.233.187.99', 1); host = s.addr.last }
-
-      sis_server, sis_port = @config["scalarm_information_service_url"].split(":")
-      http = Net::HTTP.new(sis_server, sis_port.to_i)
-
-      req = Net::HTTP::Post.new("/register_node_manager")
-      req.basic_auth @config["information_service_login"], @config["information_service_password"]
-      req.set_form_data({"server" => host, "port" => @config["port"]})
-      response = http.request(req)
     end
 
   end
