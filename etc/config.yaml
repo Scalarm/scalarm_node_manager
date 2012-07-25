@@ -14,3 +14,16 @@ installation_dir: /opt
 starting_port: 3001
 # time interval between subsequent registration of node manager
 registration_interval: 300
+
+# Monitoring section
+# url to the mongo db server
+monitoring_db_url: localhost:10000
+# table name within the server
+monitoring_db_name: eusas_monitoring
+monitoring_db_user: eusas
+monitoring_db_pass: hidden
+monitoring_interval: 30
+# which metric should be monitored
+# this is a list of names separeted with the ":" sign
+# currently the following list is supported
+monitored_metrics: cpu:memory:storage:experiment_manager

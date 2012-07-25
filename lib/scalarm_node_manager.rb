@@ -1,5 +1,6 @@
 require "scalarm_node_manager/version"
 require "node_manager_notifier"
+require "monitoring_service"
 require "sinatra"
 require "yaml"
 require 'net/http'
@@ -13,14 +14,7 @@ module Scalarm
       @config = YAML::load_file File.join(spec.gem_dir, "etc", "config.yaml")
 
       @@manager_type = nil
-
-      node_manager_notifier = Scalarm::NodeManagerNotifier.new(@config["registration_interval"].to_i,
-                                                               @config["starting_port"],
-                                                               @config["scalarm_information_service_url"],
-                                                               @config["information_service_login"],
-                                                               @config["information_service_password"])
-
-      node_manager_notifier.start_registration_thread
+      start_related_services
     end
 
     def server_port
@@ -84,6 +78,19 @@ module Scalarm
 
     def component_dir(manager_type)
       "#{@config["installation_dir"]}/scalarm_#{manager_type}_manager"
+    end
+
+    def start_related_services
+      node_manager_notifier = Scalarm::NodeManagerNotifier.new(@config["registration_interval"].to_i,
+                                                               @config["starting_port"],
+                                                               @config["scalarm_information_service_url"],
+                                                               @config["information_service_login"],
+                                                               @config["information_service_password"])
+
+      node_manager_notifier.start_registration_thread
+
+      monitoring_service = Scalarm::MonitoringService.new(@config)
+      monitoring_service.start_monitoring_thread
     end
 
   end

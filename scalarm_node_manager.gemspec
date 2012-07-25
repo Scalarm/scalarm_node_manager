@@ -17,4 +17,5 @@ Gem::Specification.new do |gem|
   # dependencies
   gem.add_dependency("sinatra", "1.3.2")
   gem.add_dependency("daemons", "1.1.8")
+  gem.add_dependency("mongo", "1.6.4")
 end
