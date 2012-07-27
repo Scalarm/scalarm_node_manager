@@ -120,7 +120,7 @@ module Scalarm
     def monitor_storage
       storage_measurements = []
 
-      iostat_out = `iostat -d -m`
+      iostat_out = `iostat -d -m -x`
       iostat_out_lines = iostat_out.split("\n")
 
       iostat_out_lines.each_with_index do |iostat_out_line, i|
@@ -132,8 +132,8 @@ module Scalarm
               storage_metric_values = iostat_out_lines[i+k].split(" ")
               device_name = storage_metric_values[storage_metric_names.index("Device:")]
 
-              ["MB_read", "MB_wrtn"].each do |metric_name|
-                storage_measurements << ["Storage___#{device_name}___#{metric_name}",
+              ["rMB/s", "wMB/s", "r/s", "w/s", "await"].each do |metric_name|
+                storage_measurements << ["Storage___#{device_name}___#{metric_name.gsub("/", "_")}",
                                          Time.now.strftime(Scalarm::TIME_FORMAT),
                                          storage_metric_values[storage_metric_names.index(metric_name)]]
               end
