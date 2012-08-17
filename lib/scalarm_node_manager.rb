@@ -51,18 +51,24 @@ module Scalarm
     def start_manager(manager_type, number)
       if manager_type == "experiment"
         `cd #{component_dir(manager_type)}; #{experiment_manager_cmd("start", @config["starting_port"], number)}`
+      elsif manager_type == "storage"
+        `cd #{component_dir(manager_type)}; ruby scalarm_storage_manager.rb start_scalarm_db`
       end
     end
 
     def stop_manager(manager_type, number)
       if manager_type == "experiment"
         `cd #{component_dir(manager_type)}; #{experiment_manager_cmd("stop", @config["starting_port"], number)}`
+      elsif manager_type == "storage"
+        `cd #{component_dir(manager_type)}; ruby scalarm_storage_manager.rb stop_scalarm_db`
       end
     end
 
     def manager_status(manager_type, number)
       if manager_type == "experiment"
         `cd #{component_dir(manager_type)}; #{experiment_manager_cmd("status", @config["starting_port"], number)}`
+      elsif manager_type == "storage"
+        `cd #{component_dir(manager_type)}; ruby scalarm_storage_manager.rb status_scalarm_db`
       end
     end
 
@@ -82,7 +88,7 @@ module Scalarm
 
     def start_related_services
       node_manager_notifier = Scalarm::NodeManagerNotifier.new(@config["registration_interval"].to_i,
-                                                               @config["starting_port"],
+                                                               @config["port"],
                                                                @config["scalarm_information_service_url"],
                                                                @config["information_service_login"],
                                                                @config["information_service_password"])

@@ -97,7 +97,7 @@ module Scalarm
 
     # monitors percantage utilization of the CPU
     def monitor_cpu
-      mpstat_out = `mpstat`
+      mpstat_out = `mpstat 1 1`
       mpstat_lines = mpstat_out.split("\n")
       cpu_util_values = mpstat_lines[-1].split
 
