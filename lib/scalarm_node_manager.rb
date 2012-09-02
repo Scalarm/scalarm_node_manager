@@ -53,6 +53,10 @@ module Scalarm
         `cd #{component_dir(manager_type)}; #{experiment_manager_cmd("start", @config["starting_port"], number)}`
       elsif manager_type == "storage"
         `cd #{component_dir(manager_type)}; ruby scalarm_storage_manager.rb start_scalarm_db`
+      elsif manager_type == "simulation"
+        `cd #{component_dir(manager_type)}; nohup sh eusas_run.sh > /dev/null 2>&1 &`
+      else
+        "Manager type #{manager_type} has not been recognized. Valid options include [experiment, storage, simulation]."
       end
     end
 
@@ -61,6 +65,15 @@ module Scalarm
         `cd #{component_dir(manager_type)}; #{experiment_manager_cmd("stop", @config["starting_port"], number)}`
       elsif manager_type == "storage"
         `cd #{component_dir(manager_type)}; ruby scalarm_storage_manager.rb stop_scalarm_db`
+      elsif manager_type == "simulation"
+        out = %x[ps aux | grep "java.*eusas.schedulers.VirtualMachineScheduler"]
+        out.split("\n").delete_if{|line| line.include? "grep"}.each do |process_line|
+        pid = process_line.split(" ")[1]
+          puts "kill -9 #{pid}"
+          system("kill -9 #{pid}")
+        end
+      else
+        "Manager type #{manager_type} has not been recognized. Valid options include [experiment, storage, simulation]."
       end
     end
 
@@ -69,6 +82,11 @@ module Scalarm
         `cd #{component_dir(manager_type)}; #{experiment_manager_cmd("status", @config["starting_port"], number)}`
       elsif manager_type == "storage"
         `cd #{component_dir(manager_type)}; ruby scalarm_storage_manager.rb status_scalarm_db`
+      elsif manager_type == "simulation"
+        out = (%x[ps aux | grep "java.*eusas.schedulers.VirtualMachineScheduler"]).split("\n")
+        "Simulation manager is#{" not" if out.delete_if{|line| line.include? "grep"}.size == 0} running\n"
+      else
+        "Manager type #{manager_type} has not been recognized. Valid options include [experiment, storage, simulation]."
       end
     end
 
